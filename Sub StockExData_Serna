@@ -1,0 +1,156 @@
+Sub StockExData()
+
+'Create script that will loop thru each year of stock data
+'Needs to go through all rows til last one
+
+
+Dim WS As Worksheet
+
+For Each WS In Worksheets
+WS.Activate
+
+
+
+LastRow = WS.Cells(Rows.Count, 1).End(xlUp).Row
+
+
+
+
+    
+'variables
+
+
+
+Dim i As Long
+Dim x As Double
+Dim OpenPrice As Double
+Dim ClosePrice As Double
+
+'''pend
+
+Dim YearlyChange As Double
+Dim PercentChange As Double
+Dim Ticker As String
+Dim TotalVolume As Double
+
+
+
+
+'setting column & row for output
+x = 2
+i = 2
+TotalVolume = 0
+
+'Looping through Ticker's (identify tickers) & Volume
+
+i = 2
+
+Cells(x, 9).Value = Cells(x, 1).Value
+OpenPrice = Cells(i, 3).Value
+
+LastRow = WS.Cells(Rows.Count, 1).End(xlUp).Row
+
+For i = 2 To LastRow
+
+If Cells(i, 1).Value = Cells(x, 9).Value Then
+    Ticker = Cells(i, 1).Value
+    TotalVolume = TotalVolume + Cells(i, 7).Value
+   
+    ClosePrice = Cells(i, 6).Value
+    
+    Else
+ 
+ ' yearly change
+ 
+   YearlyChange = ClosePrice - OpenPrice
+   Cells(x, 10).Value = YearlyChange
+   
+   
+   'add percent change
+   Cells(x, 11).Value = PercentChange
+   
+     
+    If (OpenPrice = 0 And ClosePrice = 0) Then
+        PercentChange = 0
+        
+        ElseIf (OpenPrice = 0 And ClosePrice <> 0) Then
+        PercentChange = 1
+                 
+        Else
+        
+        PercentChange = (ClosePrice / OpenPrice) - 1
+    End If
+        
+    Cells(x, 11).Style = "Percent"
+        
+        
+        
+        
+        
+  ' next conidition
+        If Cells(x, 10).Value >= 0 Then
+            Cells(x, 10).Interior.ColorIndex = 4
+        
+            Else
+            
+            Cells(x, 10).Interior.ColorIndex = 3
+        
+        End If
+        
+        
+        
+        
+' set total volume
+
+
+Cells(x, 12).Value = TotalVolume
+x = x + 1
+'reset
+
+OpenPrice = Cells(i, 3).Value
+TotalVolume = Cells(i, 7).Value
+
+
+Cells(x, 9).Value = Cells(i, 1).Value
+
+TotalVolume = 0
+End If
+Next i
+
+
+
+        
+        
+        
+' Color conditioning
+    For x = 2 To LastRow
+    
+    If Cells(x, 10).Value >= 0 Then
+    Cells(x, 10).Interior.ColorIndex = 4
+    ElseIf Cells(x, 10) < 0 Then
+    Cells(x, 10).Interior.ColorIndex = 3
+    
+    End If
+    Next x
+    
+
+
+
+WS.Range("A1") = WS.Name
+
+
+Next WS
+
+
+End Sub
+
+Sub Reset()
+For Each WS In Worksheet
+Dim Worksheet As String
+Worksheet = WS.Name
+
+Sheets(WS.Name).Select
+Next WS
+End Sub
+
+
